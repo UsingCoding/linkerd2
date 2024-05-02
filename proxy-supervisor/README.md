@@ -27,9 +27,9 @@ Small Go-supervisor which tracks status of containers and terminate linkerd-prox
 * Supervisor start tracking container statuses
 * Supervisor wait for termination signal from K8S
 * `kubectl roolout restart deployment <deployment>`
-* Supervisor receives termination signal from kubelet and wait:
-  * Until all containers estimated stopped
-  * Until [timeout](#graceful-termination-timeout) is not expires
+* Supervisor receives termination signal from kubelet and wait Until:
+  * All estimated containers stopped
+  * [Timeout](#graceful-termination-timeout) is not expires
 * When one of conditions satisfied: supervisor terminates linkerd-proxy by sending `SIGTERM`
 
 # Requirements
