@@ -155,9 +155,10 @@ func allContainersNotReady(containers []corev1.ContainerStatus) bool {
 }
 
 func excludeLinkerdProxy(containers []corev1.ContainerStatus) []corev1.ContainerStatus {
+	const linkerdContainer = "linkerd-proxy"
 	res := make([]corev1.ContainerStatus, 0, len(containers))
 	for _, container := range containers {
-		if container.Name != "linkerd-proxy" {
+		if container.Name != linkerdContainer {
 			res = append(res, container)
 		}
 	}

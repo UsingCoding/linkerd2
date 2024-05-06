@@ -22,22 +22,19 @@ type Params struct {
 
 	GracefulTimeout  time.Duration `json:"graceful_timeout"`
 	ChildProcessArgs []string      `json:"child_process_args"`
-
-	Logger logrus.FieldLogger `json:"-"`
 }
 
 // Supervisor track status of containers in Pod (except linkerd-proxy) and wait for their termination
 // before terminate child process - linkerd-proxy
-func Supervisor(ctx context.Context, p Params) error {
+func Supervisor(ctx context.Context, p Params, logger logrus.FieldLogger) error {
 	data, err := json.Marshal(p)
 	if err != nil {
 		return errors.Wrap(err, "failed to marshal supervisor params")
 	}
 
-	p.Logger.
+	logger.
 		WithFields(logrus.Fields{
-			"params":  json.RawMessage(data),
-			"params1": p,
+			"params": json.RawMessage(data),
 		}).
 		Infof("Start proxy supervisor")
 
@@ -66,7 +63,7 @@ func Supervisor(ctx context.Context, p Params) error {
 
 	select {
 	case <-ctx.Done():
-		p.Logger.
+		logger.
 			Info("Graceful timeout exhausted, proxy will be terminated")
 
 		err = ctx.Err()
@@ -76,7 +73,7 @@ func Supervisor(ctx context.Context, p Params) error {
 
 		return err
 	case <-childCtx.Done():
-		p.Logger.
+		logger.
 			Info("Containers terminated, proxy exiting")
 
 		return eg.Wait()

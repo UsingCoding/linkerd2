@@ -44,8 +44,8 @@ func (c child) Start(ctx context.Context) error {
 	go func() {
 		<-ctx.Done()
 
-		// ignore if failed to send signal
-		_ = c.cmd.Process.Signal(syscall.SIGTERM)
+		// ignore if failed to terminate child
+		_ = c.Terminate()
 	}()
 
 	return c.cmd.Wait()

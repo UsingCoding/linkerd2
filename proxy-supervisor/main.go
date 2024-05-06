@@ -23,7 +23,7 @@ func main() {
 }
 
 func runSupervisor(ctx context.Context) error {
-	params, err := configureSupervisorParams()
+	params, logger, err := configureSupervisorParams()
 	if err != nil {
 		return err
 	}
@@ -44,21 +44,22 @@ func runSupervisor(ctx context.Context) error {
 	return s(
 		ctx,
 		params,
+		logger,
 	)
 }
 
-func configureSupervisorParams() (supervisor.Params, error) {
+func configureSupervisorParams() (supervisor.Params, logrus.FieldLogger, error) {
 	pod := extractEnv("_pod_name", func(s string) string {
 		return s
 	})
 	if pod == "" {
-		return supervisor.Params{}, fmt.Errorf("_pod_name not set")
+		return supervisor.Params{}, nil, fmt.Errorf("_pod_name not set")
 	}
 	ns := extractEnv("_pod_ns", func(s string) string {
 		return s
 	})
 	if ns == "" {
-		return supervisor.Params{}, fmt.Errorf("_pod_ns not set")
+		return supervisor.Params{}, nil, fmt.Errorf("_pod_ns not set")
 	}
 	gracefulTimeout := extractEnv("LINKERD2_PROXY_SUPERVISOR_GRACEFULTIMEOUT", func(s string) time.Duration {
 		d, _ := time.ParseDuration(s)
@@ -107,8 +108,7 @@ func configureSupervisorParams() (supervisor.Params, error) {
 		// run proxy-identity
 		// All input args are static
 		ChildProcessArgs: []string{"/usr/lib/linkerd/linkerd2-proxy-identity"},
-		Logger:           fieldLogger,
-	}, nil
+	}, fieldLogger, nil
 }
 
 func extractEnv[T any](env string, f func(string) T) (t T) {

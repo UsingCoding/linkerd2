@@ -15,7 +15,7 @@ and they solve [problem](#problem) in more canonical way - [When to use sidecar 
 
 So if your kubernetes version >=1.28 it's **strongly recommended** to use `Native sidecars` instead of this supervisor.
 
-This solution for users of linkerd with lower versions of kubernetes.
+Solution with supervisor **only** for users of linkerd with lower versions of kubernetes.
 
 # Solution
 
@@ -56,7 +56,7 @@ rules:
 ## Configuration state
 
 * By default, supervisor disabled. Enable it with env `LINKERD2_PROXY_SUPERVISOR=1`
-* [Graceful termination](#graceful-termination-timeout), default is `30s`. Should be coupled with
+* [Graceful termination](#graceful-termination-timeout), default is `30s`
 * Log format: use same configuration as linkerd-proxy
 
 ## Status tracking

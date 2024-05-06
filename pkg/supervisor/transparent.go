@@ -15,16 +15,15 @@ import (
 
 // TransparentSupervisor used to be supervisor without any logic and just launch child process
 // Used in cases when no supervisor required
-func TransparentSupervisor(ctx context.Context, p Params) error {
+func TransparentSupervisor(ctx context.Context, p Params, logger logrus.FieldLogger) error {
 	data, err := json.Marshal(p)
 	if err != nil {
 		return errors.Wrap(err, "failed to marshal supervisor params")
 	}
 
-	p.Logger.
+	logger.
 		WithFields(logrus.Fields{
-			"params":  json.RawMessage(data),
-			"params1": p,
+			"params": json.RawMessage(data),
 		}).
 		Infof("Start proxy transparent supervisor")
 
